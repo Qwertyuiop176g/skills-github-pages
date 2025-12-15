@@ -41,6 +41,19 @@ Here's a recap of all the tasks you've accomplished in your repository:
 - [Read the GitHub Getting Started docs](https://docs.github.com/en/get-started).
 - To find projects to contribute to, check out [GitHub Explore](https://github.com/explore).
 
+## StatMonitor Image Processing Module
+
+This repository also includes a Python module for adding stat monitoring headers to images. See [STAT_MONITOR_README.md](STAT_MONITOR_README.md) for documentation.
+
+**Quick Start:**
+```python
+from stat_monitor import process_image
+
+# Process an image file
+result = process_image("input.png", logo_path="logo.png")
+result.save("output.png")
+```
+
 <footer>
 
 <!--
