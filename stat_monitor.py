@@ -10,6 +10,9 @@ from datetime import datetime
 import os
 import platform
 
+# Constants
+LOGO_BASELINE_SHIFT = 9  # Pixels to shift logo down relative to text baseline
+
 
 def replace_area(
     img,
@@ -209,8 +212,8 @@ def draw_stat_header(
                 fonts["title"] = ImageFont.truetype(FONT_BOLD, max(min_font_size, int(BASE_TITLE * scale)))
                 fonts["sub"] = ImageFont.truetype(FONT_BOLD, max(min_font_size, int(BASE_SUB * scale)))
                 fonts["body"] = ImageFont.truetype(FONT_BOLD, max(min_font_size, int(BASE_BODY * scale)))
-            except Exception as e:
-                # Fallback to default font
+            except (OSError, IOError):
+                # Fallback to default font if custom font can't be loaded
                 default_font = ImageFont.load_default()
                 fonts["title"] = default_font
                 fonts["sub"] = default_font
@@ -350,10 +353,11 @@ def draw_stat_header(
                     lw = int(logo_img.width * ratio)
                     
                     # Align bottom of logo with baseline + custom shift
-                    logo_shift = +9  # Negative = shift up, Positive = shift down
-                    ly = int(baseline_y - lh + logo_shift)
+                    ly = int(baseline_y - lh + LOGO_BASELINE_SHIFT)
                     
-                    logo_resized = logo_img.resize((lw, lh), Image.LANCZOS)
+                    # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS
+                    resample = getattr(Image, 'Resampling', Image).LANCZOS
+                    logo_resized = logo_img.resize((lw, lh), resample)
                     img.alpha_composite(logo_resized, (int(cx), int(ly)))
                     cx += lw
                 # If no logo, just skip this item (don't add width)
